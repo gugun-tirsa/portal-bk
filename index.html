@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal BK - MTsN 1 Kabupaten Gorontalo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                            950: '#090d16',
+                        },
+                        gold: {
+                            500: '#eab308',
+                            600: '#d97706',
+                            400: '#facc15'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Statistics & Assessments -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col overflow-hidden">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Top Header -->
+    <header class="bg-navy-900 text-white shadow-md z-30 flex items-center justify-between px-4 lg:px-8 py-3 shrink-0">
+        <div class="flex items-center space-x-3">
+            <button id="sidebar-toggle" class="lg:hidden text-white hover:text-gold-400 focus:outline-none p-2 rounded-lg">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gold-500 flex items-center justify-center font-bold text-navy-950 text-lg shadow-inner border-2 border-white/20">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm lg:text-base tracking-wide text-white">PORTAL BK MTsN 1 KAB. GORONTALO</h1>
+                    <p class="text-xs text-gold-400 font-medium">Kurikulum Berbasis Cinta (KBC) • Unggul & Berkarakter</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <!-- Download HTML Button for Convenience -->
+            <button onclick="downloadPageAsHTML()" class="hidden sm:flex items-center space-x-1.5 bg-gold-500 hover:bg-gold-600 text-navy-950 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow">
+                <i class="fa-solid fa-download"></i>
+                <span>Download Website</span>
+            </button>
+
+            <!-- Notifications Bell -->
+            <button onclick="showNotificationDropdown()" class="relative text-slate-300 hover:text-white p-2">
+                <i class="fa-solid fa-bell text-lg"></i>
+                <span class="absolute top-1 right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">3</span>
+            </button>
+
+            <!-- Role Switcher & User Profile -->
+            <div class="flex items-center space-x-2 bg-navy-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                <div class="text-right hidden sm:block">
+                    <p id="current-user-name" class="text-xs font-semibold text-white">Ahmad Siswa</p>
+                    <p id="current-user-role" class="text-[10px] text-gold-400 font-medium">Siswa Kelas VIII-A</p>
+                </div>
+                <div class="relative">
+                    <button onclick="toggleRoleModal()" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold hover:bg-blue-500 transition shadow">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex overflow-hidden relative">
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="absolute lg:relative inset-y-0 left-0 z-40 w-64 bg-navy-900 text-slate-300 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col border-r border-slate-800 shadow-xl">
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Menu Navigasi Utama</span>
+                <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <nav class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1">
+                <a href="#" onclick="switchTab('beranda')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition bg-blue-600 text-white shadow-sm" data-target="beranda">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span>Beranda</span>
+                </a>
+                <a href="#" onclick="switchTab('pembelajaran')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300" data-target="pembelajaran">
+                    <i class="fa-solid fa-book-open w-5 text-center"></i>
+                    <span>Pembelajaran BK</span>
+                </a>
+                <a href="#" onclick="switchTab('layanan')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300" data-target="layanan">
+                    <i class="fa-solid fa-hands-holding-child w-5 text-center"></i>
+                    <span>Layanan BK</span>
+                </a>
+                <a href="#" onclick="switchTab('konseling')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300" data-target="konseling">
+                    <i class="fa-solid fa-headset w-5 text-center"></i>
+                    <span>Konseling Online</span>
+                </a>
+                <a href="#" onclick="switchTab('asesmen')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300" data-target="asesmen">
+                    <i class="fa-solid fa-square-poll-vertical w-5 text-center"></i>
+                    <span>Asesmen Siswa</span>
+                </a>
+                <a href="#" onclick="switchTab('media')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300" data-target="media">
+                    <i class="fa-solid fa-photo-film w-5 text-center"></i>
+                    <span>Media BK</span>
+                </a>
+                
+                <div class="pt-3 pb-1 border-t border-slate-800 my-2">
+                    <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-gold-400">Khusus Guru BK / Admin</span>
+                </div>
+                
+                <a href="#" onclick="switchTab('admin-bk')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300 admin-only" data-target="admin-bk">
+                    <i class="fa-solid fa-folder-tree w-5 text-center"></i>
+                    <span>Administrasi Guru BK</span>
+                </a>
+                <a href="#" onclick="switchTab('monev')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300 admin-only" data-target="monev">
+                    <i class="fa-solid fa-chart-line w-5 text-center"></i>
+                    <span>Monitoring & Evaluasi</span>
+                </a>
+
+                <div class="pt-3 pb-1 border-t border-slate-800 my-2">
+                    <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Profil & Bantuan</span>
+                </div>
+                
+                <a href="#" onclick="switchTab('profil-guru')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-navy-800 hover:text-white text-slate-300" data-target="profil-guru">
+                    <i class="fa-solid fa-chalkboard-user w-5 text-center"></i>
+                    <span>Profil Guru BK</span>
+                </a>
+            </nav>
+
+            <div class="p-3 border-t border-slate-800 bg-navy-950 text-center">
+                <a href="https://wa.me/6281243273093" target="_blank" class="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2 px-3 rounded-lg transition shadow">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>Chat WhatsApp BK</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-6 bg-slate-100" id="main-content-area">
+
+            <!-- TAB 1: BERANDA -->
+            <section id="tab-beranda" class="tab-content space-y-6 animate-fade-in">
+                <!-- Hero Banner -->
+                <div class="bg-gradient-to-r from-navy-900 via-blue-900 to-navy-800 text-white rounded-2xl p-6 lg:p-8 shadow-lg relative overflow-hidden flex flex-col lg:flex-row items-center justify-between">
+                    <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="relative z-10 max-w-2xl space-y-4">
+                        <div class="inline-flex items-center space-x-2 bg-gold-500/20 text-gold-400 px-3 py-1 rounded-full text-xs font-semibold border border-gold-500/30">
+                            <i class="fa-solid fa-star text-[10px]"></i>
+                            <span>Selamat Datang di Layanan Prima BK Madrasah</span>
+                        </div>
+                        <h2 class="text-2xl lg:text-4xl font-extrabold tracking-tight">Portal Bimbingan dan Konseling <span class="text-gold-400">MTsN 1 Kabupaten Gorontalo</span></h2>
+                        <p class="text-slate-300 text-xs lg:text-sm leading-relaxed">
+                            Mendampingi peserta didik menggapai cita-cita mulia melalui pelayanan sepenuh hati berbasis <strong>Kurikulum Berbasis Cinta (KBC)</strong>: Cinta kepada Allah & Rasul, Cinta Ilmu, dan Cinta Diri Sendiri.
+                        </p>
+                        <div class="flex flex-wrap gap-3 pt-2">
+                            <button onclick="switchTab('konseling')" class="bg-gold-500 hover:bg-gold-600 text-navy-950 text-xs lg:text-sm font-bold px-5 py-2.5 rounded-xl transition shadow-md flex items-center space-x-2">
+                                <i class="fa-solid fa-headset"></i>
+                                <span>Konseling Online Sekarang</span>
+                            </button>
+                            <button onclick="switchTab('pembelajaran')" class="bg-white/10 hover:bg-white/20 text-white text-xs lg:text-sm font-semibold px-5 py-2.5 rounded-xl transition border border-white/20 flex items-center space-x-2">
+                                <i class="fa-solid fa-book"></i>
+                                <span>Materi Pembelajaran BK</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-6 lg:mt-0 relative z-10 flex flex-col items-center justify-center bg-white/10 p-6 rounded-2xl border border-white/10 backdrop-blur-md text-center">
+                        <div class="w-20 h-20 rounded-full bg-gold-500 text-navy-950 flex items-center justify-center text-3xl font-bold shadow-lg mb-3 border-4 border-white/20 overflow-hidden">
+                            <img src="https://ibb.co.com/gLZHvWRf" alt="Ismail Utina, S.Psi" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentNode.innerHTML='<i class=\'fa-solid fa-user-tie\'></i>';">
+                        </div>
+                        <h3 class="font-bold text-base text-white">Ismail Utina, S.Psi</h3>
+                        <p class="text-xs text-gold-400 font-medium">Guru Bimbingan & Konseling</p>
+                        <span class="mt-2 text-[10px] bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full font-semibold border border-emerald-500/30">
+                            <i class="fa-solid fa-circle text-[8px] mr-1 text-emerald-400"></i> Siap Melayani & Mendengar
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Grid (Cleared as requested) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs font-medium">Total Siswa Dilayani</p>
+                            <h4 class="text-lg lg:text-xl font-bold text-navy-900">-</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs font-medium">Sesi Konseling</p>
+                            <h4 class="text-lg lg:text-xl font-bold text-navy-900">-</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs font-medium">Modul & Materi</p>
+                            <h4 class="text-lg lg:text-xl font-bold text-navy-900">24 Modul</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-square-poll-horizontal"></i>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs font-medium">AKPD Selesai</p>
+                            <h4 class="text-lg lg:text-xl font-bold text-navy-900">-</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Announcements & Schedule Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Announcements -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="font-bold text-navy-900 flex items-center space-x-2">
+                                <i class="fa-solid fa-bullhorn text-gold-600"></i>
+                                <span>Pengumuman & Informasi BK Terbaru</span>
+                            </h3>
+                            <span class="text-xs bg-blue-50 text-blue-600 font-semibold px-2.5 py-1 rounded-md">Update Terbaru</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 hover:border-blue-300 transition">
+                                <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                                    <span class="bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">Kelas IX</span>
+                                    <span>10 November 2026</span>
+                                </div>
+                                <h4 class="font-semibold text-navy-900 text-sm">Sosialisasi Pendaftaran Sekolah Lanjutan (MAN Insan Cendekia & MAKN)</h4>
+                                <p class="text-xs text-slate-600 mt-1">Siswa kelas IX yang berminat melanjutkan ke sekolah unggulan diharapkan segera melengkapi berkas biodata diri melalui guru BK.</p>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 hover:border-blue-300 transition">
+                                <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                                    <span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">Semua Siswa</span>
+                                    <span>05 November 2026</span>
+                                </div>
+                                <h4 class="font-semibold text-navy-900 text-sm">Layanan Konseling Tatap Muka & Online Dibuka Setiap Hari Kerja</h4>
+                                <p class="text-xs text-slate-600 mt-1">Bagi siswa yang memiliki kendala belajar, sosial, maupun pribadi, silakan memanfaatkan ruang BK atau form konseling online.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jadwal Layanan BK (Updated schedule) -->
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="font-bold text-navy-900 flex items-center space-x-2">
+                                <i class="fa-solid fa-calendar-days text-gold-600"></i>
+                                <span>Jadwal Layanan BK</span>
+                            </h3>
+                        </div>
+                        <div class="space-y-3 text-xs">
+                            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
+                                <span class="font-semibold text-slate-700">Senin - Kamis</span>
+                                <span class="bg-navy-900 text-white px-2 py-1 rounded font-medium">07:30 - 14:00 WITA</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
+                                <span class="font-semibold text-slate-700">Jumat</span>
+                                <span class="bg-navy-900 text-white px-2 py-1 rounded font-medium">07:30 - 11:30 WITA</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
+                                <span class="font-semibold text-slate-700">Sabtu</span>
+                                <span class="bg-red-500 text-white px-2 py-1 rounded font-medium">Libur</span>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 text-blue-900 text-xs">
+                            <p class="font-semibold mb-1"><i class="fa-solid fa-circle-info text-blue-600 mr-1"></i> Ruang Konseling:</p>
+                            <p class="text-slate-600">Gedung MTsN 1 Kab. Gorontalo, Lantai 1 (Sayap Kiri).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: PEMBELAJARAN BK -->
+            <section id="tab-pembelajaran" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold mb-2">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Layanan Klasikal & Mandiri</span>
+                        </div>
+                        <h2 class="text-xl lg:text-2xl font-bold text-navy-900">Materi Pembelajaran Bimbingan dan Konseling</h2>
+                        <p class="text-xs text-slate-500 mt-1">Pilih bidang layanan dan tingkat kelas untuk mengakses materi berstandar Kurikulum Berbasis Cinta (KBC).</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <select id="filter-kelas" onchange="filterMateri()" class="bg-slate-100 border border-slate-300 text-xs rounded-xl px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-navy-900">
+                            <option value="all">Semua Kelas (VII, VIII, IX)</option>
+                            <option value="7">Kelas VII</option>
+                            <option value="8">Kelas VIII</option>
+                            <option value="9">Kelas IX</option>
+                        </select>
+                        <select id="filter-bidang" onchange="filterMateri()" class="bg-slate-100 border border-slate-300 text-xs rounded-xl px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-navy-900">
+                            <option value="all">Semua Bidang Layanan</option>
+                            <option value="pribadi">Bidang Pribadi</option>
+                            <option value="sosial">Bidang Sosial</option>
+                            <option value="belajar">Bidang Belajar</option>
+                            <option value="karier">Bidang Karier</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Materi Grid Container -->
+                <div id="materi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </section>
+
+            <!-- TAB 3: LAYANAN BK -->
+            <section id="tab-layanan" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl lg:text-2xl font-bold text-navy-900">11 Jenis Layanan Bimbingan dan Konseling</h2>
+                    <p class="text-xs text-slate-500 mt-1">Sesuai dengan Permendikbud dan standar operasional pelayanan BK profesional di madrasah.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="layanan-grid">
+                    <!-- Dynamic Service Cards -->
+                </div>
+            </section>
+
+            <!-- TAB 4: KONSELING ONLINE -->
+            <section id="tab-konseling" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 max-w-3xl mx-auto">
+                    <div class="border-b border-slate-100 pb-4 mb-4 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-navy-900">Form Konseling & Pengaduan Online</h2>
+                            <p class="text-xs text-slate-500">Sampaikan permasalahan atau permintaan konseling Anda dengan aman.</p>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full">
+                            <i class="fa-solid fa-lock mr-1"></i> 100% Rahasia
+                        </span>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-xs mb-6">
+                        <p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Jaminan Kerahasiaan:</p>
+                        <p>Sesuai dengan kode etik Bimbingan dan Konseling, seluruh informasi yang Anda tulis di sini dijamin kerahasiaannya dan hanya dapat diakses oleh Guru BK (Ismail Utina, S.Psi).</p>
+                    </div>
+
+                    <form id="form-konseling-online" onsubmit="submitKonseling(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Siswa</label>
+                                <input type="text" id="k-nama" required placeholder="Contoh: Siti Rahma" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-navy-900 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Kelas</label>
+                                <select id="k-kelas" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-navy-900 focus:outline-none">
+                                    <option value="">-- Pilih Kelas --</option>
+                                    <option value="VII-A">VII-A</option>
+                                    <option value="VII-B">VII-B</option>
+                                    <option value="VII-C">VII-C</option>
+                                    <option value="VIII-A">VIII-A</option>
+                                    <option value="VIII-B">VIII-B</option>
+                                    <option value="VIII-C">VIII-C</option>
+                                    <option value="IX-A">IX-A</option>
+                                    <option value="IX-B">IX-B</option>
+                                    <option value="IX-C">IX-C</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Jenis Layanan / Kategori Masalah</label>
+                                <select id="k-kategori" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-navy-900 focus:outline-none">
+                                    <option value="">-- Pilih Kategori --</option>
+                                    <option value="Pribadi">Masalah Pribadi (Emosi, Kepercayaan Diri)</option>
+                                    <option value="Sosial">Masalah Sosial (Teman Sebaya, Bullying)</option>
+                                    <option value="Belajar">Masalah Belajar (Kesulitan Konsentrasi, Nilai)</option>
+                                    <option value="Karier">Masalah Karier (Pilihan Sekolah Lanjutan)</option>
+                                    <option value="Pengaduan">Pengaduan Masalah Mendesak</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tingkat Urgensi</label>
+                                <select id="k-urgensi" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-navy-900 focus:outline-none">
+                                    <option value="Normal">Normal (Bisa dijadwalkan mingguan)</option>
+                                    <option value="Penting">Penting (Perlu penanganan segera)</option>
+                                    <option value="Darurat">Darurat (Sangat mendesak)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Ceritakan Permasalahan / Hal yang Ingin Dikonsultasikan</label>
+                            <textarea id="k-cerita" rows="5" required placeholder="Tuliskan secara terbuka. Guru BK siap mendampingi..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs focus:ring-2 focus:ring-navy-900 focus:outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-navy-900 hover:bg-navy-800 text-white font-bold py-3 px-4 rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Kirim Permintaan Konseling</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- TAB 5: ASESMEN SISWA -->
+            <section id="tab-asesmen" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl lg:text-2xl font-bold text-navy-900">Asesmen & Angket Kebutuhan Peserta Didik (AKPD)</h2>
+                    <p class="text-xs text-slate-500 mt-1">Isi instrumen asesmen mandiri untuk mengetahui kebutuhan layanan dan potensi diri Anda.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold mb-3">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <h3 class="font-bold text-navy-900 text-sm">Angket Kebutuhan Peserta Didik (AKPD)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Identifikasi kebutuhan layanan bimbingan di 4 bidang (Pribadi, Sosial, Belajar, Karier).</p>
+                        </div>
+                        <button onclick="openAsesmenModal('AKPD')" class="w-full bg-navy-900 hover:bg-navy-800 text-white py-2 rounded-xl text-xs font-semibold transition">
+                            Mulai AKPD
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold mb-3">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <h3 class="font-bold text-navy-900 text-sm">Asesmen Gaya Belajar (VARK)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Ketahui apakah Anda tipe Visual, Auditorial, Membaca/Menulis, atau Kinestetik.</p>
+                        </div>
+                        <button onclick="openAsesmenModal('Gaya Belajar')" class="w-full bg-navy-900 hover:bg-navy-800 text-white py-2 rounded-xl text-xs font-semibold transition">
+                            Tes Gaya Belajar
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mb-3">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <h3 class="font-bold text-navy-900 text-sm">Asesmen Pengelolaan Emosi</h3>
+                            <p class="text-xs text-slate-500 mt-1">Evaluasi kemampuan mengontrol diri dan mengelola stres sehari-hari di madrasah.</p>
+                        </div>
+                        <button onclick="openAsesmenModal('Pengelolaan Emosi')" class="w-full bg-navy-900 hover:bg-navy-800 text-white py-2 rounded-xl text-xs font-semibold transition">
+                            Mulai Asesmen Emosi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chart Summary Section -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-navy-900 text-sm mb-4">Grafik Hasil Asesmen Madrasah (Contoh Ringkasan)</h3>
+                    <div class="h-64 relative">
+                        <canvas id="asesmenChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: MEDIA BK -->
+            <section id="tab-media" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl lg:text-2xl font-bold text-navy-900">Media Bimbingan dan Konseling</h2>
+                    <p class="text-xs text-slate-500 mt-1">Poster edukasi, video motivasi, infografis anti-bullying, dan kesehatan mental remaja.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 flex flex-col">
+                        <div class="h-40 bg-gradient-to-br from-blue-600 to-navy-900 p-4 flex items-center justify-center text-white relative">
+                            <i class="fa-solid fa-shield-halved text-5xl text-gold-400 opacity-90"></i>
+                            <span class="absolute bottom-2 left-2 bg-black/40 text-[10px] px-2 py-0.5 rounded backdrop-blur">Infografis Anti-Bullying</span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <h3 class="font-bold text-navy-900 text-sm">Hentikan Perundungan (Bullying) di Madrasah</h3>
+                                <p class="text-xs text-slate-500 mt-1">Panduan mengenali bentuk bullying verbal, fisik, siber, serta cara melaporkannya.</p>
+                            </div>
+                            <button onclick="showToast('Mengunduh poster edukasi anti-bullying...', 'info')" class="w-full bg-slate-100 hover:bg-slate-200 text-navy-900 font-semibold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Unduh Poster PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 flex flex-col">
+                        <div class="h-40 bg-gradient-to-br from-emerald-600 to-teal-900 p-4 flex items-center justify-center text-white relative">
+                            <i class="fa-solid fa-brain text-5xl text-gold-400 opacity-90"></i>
+                            <span class="absolute bottom-2 left-2 bg-black/40 text-[10px] px-2 py-0.5 rounded backdrop-blur">Kesehatan Mental</span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <h3 class="font-bold text-navy-900 text-sm">Menjaga Kesehatan Mental Remaja Madrasah</h3>
+                                <p class="text-xs text-slate-500 mt-1">Tips mengelola kecemasan ujian, mindfulness islami, dan berpikir positif (Cinta Diri Sendiri).</p>
+                            </div>
+                            <button onclick="showToast('Mengunduh materi kesehatan mental...', 'info')" class="w-full bg-slate-100 hover:bg-slate-200 text-navy-900 font-semibold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Unduh Materi PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 flex flex-col">
+                        <div class="h-40 bg-gradient-to-br from-amber-600 to-orange-900 p-4 flex items-center justify-center text-white relative">
+                            <i class="fa-solid fa-graduation-cap text-5xl text-gold-400 opacity-90"></i>
+                            <span class="absolute bottom-2 left-2 bg-black/40 text-[10px] px-2 py-0.5 rounded backdrop-blur">Motivasi Belajar</span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <h3 class="font-bold text-navy-900 text-sm">Kiat Sukses Belajar & Manajemen Waktu Islami</h3>
+                                <p class="text-xs text-slate-500 mt-1">Menggabungkan produktivitas belajar modern dengan nilai Cinta Ilmu (Tuntutlah ilmu sampai ke negeri Cina).</p>
+                            </div>
+                            <button onclick="showToast('Mengunduh infografis belajar...', 'info')" class="w-full bg-slate-100 hover:bg-slate-200 text-navy-900 font-semibold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Unduh Infografis</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 7: ADMINISTRASI GURU BK (Admin Only) -->
+            <section id="tab-admin-bk" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col lg:flex-row items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-gold-500/20 text-gold-600 font-bold px-3 py-1 rounded-full text-xs">Pusat Administrasi Guru BK</span>
+                        <h2 class="text-xl lg:text-2xl font-bold text-navy-900 mt-1">Perangkat Kerja & Administrasi Layanan BK</h2>
+                        <p class="text-xs text-slate-500">Kelola Prota, Promes, RPL, Modul Layanan, dan Jurnal Harian Guru BK (Ismail Utina, S.Psi).</p>
+                    </div>
+                    <button onclick="showToast('Berhasil membuat dokumen RPL baru!', 'success')" class="bg-navy-900 hover:bg-navy-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">
+                        <i class="fa-solid fa-plus mr-1"></i> Tambah RPL Baru
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-navy-900 text-sm">Program Tahunan & Semester</h3>
+                                <p class="text-[10px] text-slate-500">PROTA & PROMES Tahun Ajaran 2026/2027</p>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-check mr-1"></i> Selesai Disusun</span>
+                            <button onclick="showToast('Mengunduh Prota & Promes...', 'success')" class="text-blue-600 hover:underline font-bold">Unduh PDF</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-book-open-reader"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-navy-900 text-sm">Rencana Pelaksanaan Layanan (RPL)</h3>
+                                <p class="text-[10px] text-slate-500">Layanan Klasikal & Kelompok</p>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-check mr-1"></i> 24 Topik Tersedia</span>
+                            <button onclick="showToast('Mengunduh RPL...', 'success')" class="text-blue-600 hover:underline font-bold">Unduh PDF</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-book-journal-quill"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-navy-900 text-sm">Jurnal Harian & Catatan Konseling</h3>
+                                <p class="text-[10px] text-slate-500">Rekap harian aktivitas layanan</p>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="text-blue-600 font-semibold">Aktif Hari Ini</span>
+                            <button onclick="showToast('Membuka jurnal harian...', 'info')" class="text-blue-600 hover:underline font-bold">Lihat Jurnal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table of Recent Counseling Logs -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+                    <h3 class="font-bold text-navy-900 text-sm">Daftar Pengajuan Konseling Siswa Terbaru</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-semibold">
+                                    <th class="p-3 rounded-l-lg">Nama Siswa</th>
+                                    <th class="p-3">Kelas</th>
+                                    <th class="p-3">Kategori</th>
+                                    <th class="p-3">Urgensi</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 rounded-r-lg">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-konseling-list" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 8: MONITORING & EVALUASI (Admin Only) -->
+            <section id="tab-monev" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl lg:text-2xl font-bold text-navy-900">Dashboard Monitoring & Evaluasi Layanan BK</h2>
+                    <p class="text-xs text-slate-500 mt-1">Analisis komprehensif perkembangan layanan dan sebaran permasalahan siswa.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-navy-900 text-sm mb-4">Sebaran Kasus Berdasarkan Bidang Layanan</h3>
+                        <div class="h-64 relative">
+                            <canvas id="monevPieChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-navy-900 text-sm mb-4">Grafik Bulanan Sesi Konseling & Bimbingan</h3>
+                        <div class="h-64 relative">
+                            <canvas id="monevBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 9: PROFIL GURU BK -->
+            <section id="tab-profil-guru" class="tab-content hidden space-y-6 animate-fade-in">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 lg:p-8">
+                    <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                        <div class="relative group">
+                            <div class="w-36 h-36 lg:w-44 lg:h-44 rounded-2xl bg-gradient-to-tr from-navy-900 to-blue-700 flex items-center justify-center text-white text-5xl font-bold shadow-xl border-4 border-gold-500 overflow-hidden">
+                                <img src="https://ibb.co.com/gLZHvWRf" alt="Ismail Utina, S.Psi" class="w-full h-full object-cover" onerror="this.onerror=null;this.parentNode.innerHTML='<i class=\'fa-solid fa-user-tie\'></i>';">
+                            </div>
+                            <label class="absolute bottom-2 right-2 bg-gold-500 hover:bg-gold-600 text-navy-950 p-2 rounded-xl cursor-pointer shadow-md transition text-xs font-bold flex items-center space-x-1">
+                                <i class="fa-solid fa-camera"></i>
+                                <input type="file" accept="image/*" class="hidden" onchange="updateProfilePhoto(event)">
+                            </label>
+                        </div>
+                        <div class="flex-1 text-center md:text-left space-y-3">
+                            <div class="inline-flex items-center space-x-2 bg-gold-500/20 text-gold-600 px-3 py-1 rounded-full text-xs font-semibold">
+                                <i class="fa-solid fa-award"></i>
+                                <span>Guru Bimbingan dan Konseling Profesional</span>
+                            </div>
+                            <h2 class="text-2xl lg:text-3xl font-extrabold text-navy-900">Ismail Utina, S.Psi</h2>
+                            <p class="text-xs lg:text-sm text-slate-600 font-medium">Instansi: <span class="text-navy-900 font-bold">MTsN 1 Kabupaten Gorontalo</span></p>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Berdedikasi tinggi dalam membimbing peserta didik dengan pendekatan Islami dan humanis. Mengintegrasikan <strong>Kurikulum Berbasis Cinta (KBC)</strong> dalam setiap layanan agar siswa tumbuh menjadi generasi yang cerdas, berakhlak mulia, dan mencintai ilmu pengetahuan.
+                            </p>
+                            <div class="pt-2 flex flex-wrap justify-center md:justify-start gap-3">
+                                <a href="https://wa.me/6281243273093" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center space-x-2 shadow">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span>Hubungi WhatsApp</span>
+                                </a>
+                                <button onclick="switchTab('konseling')" class="bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center space-x-2 shadow">
+                                    <i class="fa-solid fa-headset"></i>
+                                    <span>Buat Janji Konseling</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-slate-100">
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-navy-900 text-sm mb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-eye text-gold-600"></i>
+                                <span>Visi Layanan BK</span>
+                            </h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">Terwujudnya layanan Bimbingan dan Konseling yang profesional, humanis, dan religius untuk mengantarkan peserta didik mandiri, unggul, dan berkarakter mulia.</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-navy-900 text-sm mb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-bullseye text-gold-600"></i>
+                                <span>Misi Layanan BK</span>
+                            </h4>
+                            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+                                <li>Memberikan pelayanan prima berbasis KBC.</li>
+                                <li>Mendampingi perkembangan pribadi & sosial.</li>
+                                <li>Mengoptimalkan potensi akademik & karier siswa.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-navy-900 text-sm mb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-quote-left text-gold-600"></i>
+                                <span>Motto Pelayanan</span>
+                            </h4>
+                            <p class="text-xs italic text-navy-900 font-semibold bg-gold-500/10 p-3 rounded-lg border border-gold-500/20">
+                                "Melayani dengan Cinta, Mendengar dengan Empati, Membimbing dengan Sepenuh Hati."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL POPUP UNTUK MATERI & KUIS -->
+    <div id="materi-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 space-y-4 animate-fade-in relative">
+            <button onclick="closeMateriModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div id="modal-materi-content" class="space-y-4 pt-2">
+                <!-- Dynamic Content injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ROLE SWITCHER -->
+    <div id="role-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-fade-in">
+            <h3 class="font-bold text-navy-900 text-base">Ganti Hak Akses Pengguna</h3>
+            <p class="text-xs text-slate-500">Pilih peran untuk menguji tampilan portal (Siswa vs Guru BK Admin):</p>
+            <div class="space-y-2">
+                <button onclick="setRole('Siswa', 'Siswa Kelas VIII-A', false)" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-navy-900 text-xs">Ahmad (Siswa)</p>
+                        <p class="text-[10px] text-slate-500">Akses menu siswa, materi, kuis, & konseling.</p>
+                    </div>
+                    <i class="fa-solid fa-user text-blue-600"></i>
+                </button>
+                <button onclick="setRole('Ismail Utina, S.Psi', 'Guru Bimbingan & Konseling', true)" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-gold-500 hover:bg-gold-50/30 transition flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-navy-900 text-xs">Ismail Utina, S.Psi (Guru BK)</p>
+                        <p class="text-[10px] text-slate-500">Akses penuh admin, administrasi, & monev.</p>
+                    </div>
+                    <i class="fa-solid fa-user-tie text-gold-600"></i>
+                </button>
+            </div>
+            <button onclick="toggleRoleModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-xs font-semibold transition">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA STATE & MOCK STORAGE ---
+        let isAdmin = false;
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPhd08eG0HDFa4kL4wHv55sSxN373VpiG1aI7jpsMsfUkwgC-5ug4knSP14NUC-fTc/exec";
+
+        let konselingData = [
+            { id: 1, nama: "Siti Rahma", kelas: "VIII-A", kategori: "Pribadi", urgensi: "Normal", cerita: "Merasa kurang percaya diri saat tampil berbicara di depan kelas.", status: "Menunggu" },
+            { id: 2, nama: "Rian Pratama", kelas: "IX-B", kategori: "Karier", urgensi: "Penting", cerita: "Bingung memilih antara MAN Insan Cendekia atau SMA Unggulan.", status: "Diproses" }
+        ];
+
+        const materiList = [
+            {
+                id: 1,
+                kelas: 7,
+                bidang: "pribadi",
+                judul: "Mengenal Diri Sendiri & Potensi",
+                tujuan: "Peserta didik mampu memahami kelebihan dan kekurangan diri sendiri serta mensyukurinya sebagai ciptaan Allah.",
+                penjelasan: "Mengenal diri adalah langkah awal kesuksesan. Dengan memahami minat, bakat, dan karakter pribadi, kita dapat mengarahkan potensi diri secara optimal (Kurikulum Berbasis Cinta: Cinta Diri Sendiri).",
+                contoh: "Menyadari suka menggambar ilustrasi islami dan mengasahnya setiap hari.",
+                soal: "Apa langkah pertama dalam mengenali potensi diri?",
+                pilihan: ["Mengetahui kelebihan dan kekurangan", "Meniru teman sebaya", "Menunggu pujian orang lain", "Tidak peduli pada bakat"],
+                jawabanBenar: 0
+            },
+            {
+                id: 2,
+                kelas: 8,
+                bidang: "sosial",
+                judul: "Pencegahan Bullying & Etika Pergaulan",
+                tujuan: "Peserta didik memahami dampak buruk perundungan dan membangun persahabatan yang sehat di madrasah.",
+                penjelasan: "Bullying (perundungan) dalam bentuk verbal, fisik, maupun siber sangat dilarang dalam agama dan hukum. Kita harus saling menghargai dan menebar kasih sayang.",
+                contoh: "Menegur teman yang mengejek fisik orang lain dan mengajak bermain bersama.",
+                soal: "Tindakan berikut yang termasuk bullying siber adalah...",
+                pilihan: ["Mengirim pesan ancaman atau ejekan di media sosial", "Belajar kelompok via WhatsApp", "Berolahraga di lapangan", "Mengerjakan tugas piket bersama"],
+                jawabanBenar: 0
+            },
+            {
+                id: 3,
+                kelas: 8,
+                bidang: "belajar",
+                judul: "Manajemen Waktu & Gaya Belajar Efektif",
+                tujuan: "Peserta didik dapat menyusun jadwal harian dan memahami gaya belajar (Visual, Auditorial, Kinestetik).",
+                penjelasan: "Manajemen waktu yang baik mencakup keseimbangan antara ibadah, belajar, dan istirahat (Cinta Ilmu).",
+                contoh: "Membuat jadwal belajar setelah shalat Maghrib setiap hari.",
+                soal: "Siswa yang lebih cepat paham dengan mendengarkan penjelasan guru memiliki gaya belajar...",
+                pilihan: ["Auditorial", "Visual", "Kinestetik", "Fisik"],
+                jawabanBenar: 0
+            },
+            {
+                id: 4,
+                kelas: 9,
+                bidang: "karier",
+                judul: "Perencanaan Studi Lanjutan & Cita-Cita",
+                tujuan: "Peserta didik kelas IX mampu menentukan pilihan sekolah lanjutan (MA, MAK, SMA, SMK) sesuai minat dan bakat.",
+                penjelasan: "Perencanaan karier dimulai sejak dini dengan mencocokkan nilai rapor, cita-restu orang tua, dan prospek masa depan.",
+                contoh: "Mencari informasi pendaftaran MAN Insan Cendekia Gorontalo.",
+                soal: "Faktor utama yang harus dipertimbangkan dalam memilih sekolah lanjutan adalah...",
+                pilihan: ["Minat, bakat, dan kemampuan diri", "Ikut-ikutan teman akrab", "Lokasi paling dekat kantin", "Paksaan pihak lain"],
+                jawabanBenar: 0
+            },
+            {
+                id: 5,
+                kelas: 7,
+                bidang: "pribadi",
+                judul: "Mengelola Emosi & Mengatasi Stres",
+                tujuan: "Peserta didik mampu mengenali emosi marah atau sedih serta menyalurkannya secara positif.",
+                penjelasan: "Ketika marah dianjurkan beristighfar, mengambil air wudhu, atau duduk tenang.",
+                contoh: "Menarik napas dalam ketika merasa gugup sebelum ujian.",
+                soal: "Sikap yang tepat saat merasa marah di madrasah adalah...",
+                pilihan: ["Beristighfar dan menenangkan diri", "Membanting barang", "Berteriak keras", "Memusuhi teman"],
+                jawabanBenar: 0
+            },
+            {
+                id: 6,
+                kelas: 9,
+                bidang: "sosial",
+                judul: "Bijak Menggunakan Media Sosial",
+                tujuan: "Peserta didik cerdas dan beretika dalam bermedia sosial tanpa menyebar hoaks.",
+                penjelasan: "Tabayyun (mengecek kebenaran berita) adalah kunci utama dalam bermedia sosial.",
+                contoh: "Tidak langsung membagikan berita yang belum jelas sumbernya.",
+                soal: "Arti dari Tabayyun dalam bermedia sosial adalah...",
+                pilihan: ["Mengecek kebenaran informasi", "Langsung percaya berita viral", "Membuat akun palsu", "Menghapus komentar negatif"],
+                jawabanBenar: 0
+            }
+        ];
+
+        const layananList = [
+            { title: "Layanan Orientasi", desc: "Membantu peserta didik baru menyesuaikan diri dengan lingkungan madrasah dan tata tertib.", tujuan: "Adaptasi cepat", prosedur: "Dilaksanakan pada awal tahun ajaran baru di aula madrasah." },
+            { title: "Layanan Informasi", desc: "Memberikan pemahaman tentang berbagai hal penting (studi lanjutan, karier, kesehatan mental).", tujuan: "Menambah wawasan", prosedur: "Pemberian materi klasikal di kelas atau infografis digital." },
+            { title: "Layanan Penguasaan Konten", desc: "Mengembangkan kemampuan atau kompetensi belajar, kebiasaan positif, dan keterampilan hidup.", tujuan: "Penguasaan skill", prosedur: "Pelatihan bimbingan kelompok terjadwal." },
+            { title: "Layanan Konseling Individual", desc: "Bantuan tatap muka secara pribadi antara siswa dan guru BK untuk mengentaskan masalah pribadi.", tujuan: "Pengentasan masalah", prosedur: "Siswa mendaftar online atau datang langsung ke ruang BK." },
+            { title: "Layanan Konseling Kelompok", desc: "Pembahasan masalah pribadi anggota kelompok dalam suasana dinamika kelompok yang dinamis.", tujuan: "Pemecahan bersama", prosedur: "Pembentukan kelompok 3-6 siswa dengan masalah sejenis." },
+            { title: "Layanan Bimbingan Kelompok", desc: "Pemberian informasi atau pembahasan topik hangat melalui dinamika kelompok yang interaktif.", tujuan: "Sosialisasi & dinamika", procedures: "Diskusi kelompok terarah mingguan." },
+            { title: "Layanan Konsultasi", desc: "Membantu pihak lain (orang tua/guru) dalam memperoleh wawasan cara membimbing peserta didik.", tujuan: "Sinergi madrasah-rumah", prosedur: "Janji temu konsultasi orang tua dengan guru BK." },
+            { title: "Layanan Mediasi", desc: "Penyelesaian perselisihan atau konflik antar siswa dengan bantuan guru BK sebagai mediator.", tujuan: "Perdamaian & harmoni", prosedur: "Pertemuan khusus mediasi damai di ruang BK." },
+            { title: "Layanan Advokasi", desc: "Membela dan mendampingi hak-hak siswa yang mengalami hambatan atau perlakuan tidak adil.", tujuan: "Perlindungan siswa", prosedur: "Penanganan kasus khusus oleh tim BK dan madrasah." },
+            { title: "Layanan Responsif", desc: "Bantuan langsung bagi siswa yang menghadapi situasi darurat atau butuh pertolongan cepat.", tujuan: "Penanganan cepat", prosedur: "Laporan segera via form online atau piket BK." },
+            { title: "Perencanaan Individual", desc: "Membantu siswa merencanakan masa depan, studi lanjutan, dan karier secara sistematis.", tujuan: "Sukses masa depan", prosedur: "Bimbingan portofolio dan asesmen minat bakat." }
+        ];
+
+        // --- INIT ON LOAD ---
+        window.onload = function() {
+            renderMateri(materiList);
+            renderLayanan();
+            renderAdminKonseling();
+            initCharts();
+        };
+
+        // --- DOWNLOAD PAGE AS HTML FILE ---
+        function downloadPageAsHTML() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Portal_BK_MTsN1_Gorontalo.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('File website berhasil di-download!', 'success');
+        }
+
+        // --- TAB NAVIGATION SYSTEM ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+                el.classList.add('hover:bg-navy-800', 'hover:text-white', 'text-slate-300');
+            });
+
+            const activeBtn = document.querySelector(`[data-target="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+                activeBtn.classList.remove('hover:bg-navy-800', 'text-slate-300');
+            }
+
+            // Close mobile sidebar if open
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+            }
+
+            // Scroll to top
+            document.getElementById('main-content-area').scrollTop = 0;
+        }
+
+        // Sidebar Toggle for Mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // --- RENDER FUNCTIONS ---
+        function renderMateri(list) {
+            const grid = document.getElementById('materi-grid');
+            grid.innerHTML = '';
+            if(list.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-xs">Materi tidak ditemukan.</div>`;
+                return;
+            }
+
+            list.forEach(m => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between hover:shadow-md transition">
+                        <div class="p-5 space-y-3">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="bg-blue-100 text-blue-700 font-bold px-2.5 py-1 rounded-md">Kelas ${m.kelas}</span>
+                                <span class="bg-gold-500/20 text-gold-700 font-semibold px-2.5 py-1 rounded-md uppercase text-[10px]">${m.bidang}</span>
+                            </div>
+                            <h3 class="font-bold text-navy-900 text-sm leading-snug">${m.judul}</h3>
+                            <p class="text-xs text-slate-500 line-clamp-2">${m.tujuan}</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-[10px] text-slate-400 font-medium"><i class="fa-solid fa-book-open mr-1"></i> Kurikulum Berbasis Cinta</span>
+                            <button onclick="openMateriModalDetail(${m.id})" class="bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                                Pelajari & Kuis
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterMateri() {
+            const kelas = document.getElementById('filter-kelas').value;
+            const bidang = document.getElementById('filter-bidang').value;
+
+            let filtered = materiList;
+            if(kelas !== 'all') {
+                filtered = filtered.filter(m => m.kelas == kelas);
+            }
+            if(bidang !== 'all') {
+                filtered = filtered.filter(m => m.bidang == bidang);
+            }
+            renderMateri(filtered);
+        }
+
+        function renderLayanan() {
+            const grid = document.getElementById('layanan-grid');
+            grid.innerHTML = '';
+            layananList.forEach((l, idx) => {
+                grid.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3 hover:border-blue-300 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">${idx+1}</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 font-medium px-2 py-0.5 rounded">Standar BK</span>
+                            </div>
+                            <h3 class="font-bold text-navy-900 text-sm">${l.title}</h3>
+                            <p class="text-xs text-slate-500 mt-1">${l.desc}</p>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-[11px] space-y-1">
+                            <p class="text-slate-700 font-semibold"><span class="text-gold-600">Tujuan:</span> ${l.tujuan}</p>
+                            <p class="text-slate-600"><span class="font-semibold text-slate-700">Prosedur:</span> ${l.prosedur}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- MATERI MODAL & INTERACTIVE QUIZ ---
+        function openMateriModalDetail(id) {
+            const m = materiList.find(x => x.id === id);
+            if(!m) return;
+
+            const modalContent = document.getElementById('modal-materi-content');
+            modalContent.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">Kelas ${m.kelas} • Bidang ${m.bidang.toUpperCase()}</span>
+                        <span class="text-xs text-slate-400 font-medium">MTsN 1 Kab. Gorontalo</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-navy-900">${m.judul}</h2>
+                    
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-xs text-blue-900 space-y-1">
+                        <p class="font-bold"><i class="fa-solid fa-bullseye text-blue-600 mr-1"></i> Tujuan Pembelajaran:</p>
+                        <p class="text-slate-700">${m.tujuan}</p>
+                    </div>
+
+                    <div class="space-y-2 text-xs text-slate-700 leading-relaxed">
+                        <h4 class="font-bold text-navy-900 text-sm">Penjelasan Materi</h4>
+                        <p>${m.penjelasan}</p>
+                    </div>
+
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-xs text-emerald-900 space-y-1">
+                        <p class="font-bold"><i class="fa-solid fa-lightbulb text-emerald-600 mr-1"></i> Contoh dalam Kehidupan Sehari-hari:</p>
+                        <p class="text-slate-700">${m.contoh}</p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <h4 class="font-bold text-navy-900 text-sm"><i class="fa-solid fa-circle-question text-gold-600 mr-1"></i> Kuis Interaktif Otomatis</h4>
+                        <p class="text-xs text-slate-700 font-medium">${m.soal}</p>
+                        <div id="quiz-options" class="space-y-2">
+                            ${m.pilihan.map((pil, i) => `
+                                <label class="flex items-center space-x-2 bg-white p-2.5 rounded-lg border border-slate-200 hover:border-blue-400 cursor-pointer text-xs">
+                                    <input type="radio" name="quiz-ans" value="${i}" class="text-navy-900 focus:ring-navy-900">
+                                    <span class="text-slate-700">${pil}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                        <button onclick="submitQuiz(${m.jawabanBenar})" class="w-full bg-navy-900 hover:bg-navy-800 text-white font-bold py-2.5 rounded-xl text-xs transition">
+                            Periksa Jawaban Kuis
+                        </button>
+                        <div id="quiz-result" class="text-xs font-bold text-center mt-2"></div>
+                    </div>
+
+                    <button onclick="closeMateriModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 rounded-xl text-xs transition">
+                        Tutup Materi
+                    </button>
+                </div>
+            `;
+            document.getElementById('materi-modal').classList.remove('hidden');
+        }
+
+        function closeMateriModal() {
+            document.getElementById('materi-modal').classList.add('hidden');
+        }
+
+        function submitQuiz(benarIdx) {
+            const selected = document.querySelector('input[name="quiz-ans"]:checked');
+            const resDiv = document.getElementById('quiz-result');
+            if(!selected) {
+                showToast('Silakan pilih salah satu jawaban terlebih dahulu!', 'info');
+                return;
+            }
+            if(parseInt(selected.value) === benarIdx) {
+                resDiv.innerHTML = `<span class="text-emerald-600"><i class="fa-solid fa-circle-check mr-1"></i> Luar biasa! Jawaban Anda benar. Pertahankan semangat belajar (Cinta Ilmu)!</span>`;
+                showToast('Jawaban Kuis Benar!', 'success');
+            } else {
+                resDiv.innerHTML = `<span class="text-red-600"><i class="fa-solid fa-circle-xmark mr-1"></i> Belum tepat. Ayo pelajari materinya kembali dengan penuh semangat!</span>`;
+                showToast('Jawaban Kuis Belum Tepat', 'info');
+            }
+        }
+
+        // --- ASESMEN MODAL & CHARTS ---
+        function openAsesmenModal(jenis) {
+            showToast(`Membuka instrumen ${jenis}... Silakan jawab dengan jujur.`, 'info');
+            setTimeout(() => {
+                showToast(`Hasil Asesmen ${jenis} berhasil direkam dan dianalisis sistem.`, 'success');
+            }, 1500);
+        }
+
+        function initCharts() {
+            // Asesmen Summary Chart
+            const ctx1 = document.getElementById('asesmenChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Pribadi', 'Sosial', 'Belajar', 'Karier'],
+                    datasets: [{
+                        label: 'Tingkat Kebutuhan Layanan (%)',
+                        data: [78, 65, 85, 90],
+                        backgroundColor: ['#1e3a8a', '#3b82f6', '#eab308', '#10b981'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+
+            // Monev Pie Chart
+            const ctx2 = document.getElementById('monevPieChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Bidang Pribadi', 'Bidang Sosial', 'Bidang Belajar', 'Bidang Karier'],
+                    datasets: [{
+                        data: [30, 25, 25, 20],
+                        backgroundColor: ['#1e3a8a', '#3b82f6', '#eab308', '#10b981']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Monev Bar Chart
+            const ctx3 = document.getElementById('monevBarChart').getContext('2d');
+            new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: ['Juli', 'Agustus', 'September', 'Oktober', 'November'],
+                    datasets: [{
+                        label: 'Jumlah Sesi Layanan',
+                        data: [45, 60, 85, 110, 124],
+                        borderColor: '#1e3a8a',
+                        backgroundColor: 'rgba(30, 58, 138, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // --- KONSELING ONLINE SUBMISSION ---
+        async function submitKonseling(e) {
+            e.preventDefault();
+            const nama = document.getElementById('k-nama').value;
+            const kelas = document.getElementById('k-kelas').value;
+            const kategori = document.getElementById('k-kategori').value;
+            const urgensi = document.getElementById('k-urgensi').value;
+            const cerita = document.getElementById('k-cerita').value;
+
+            const payload = {
+                type: "konseling",
+                nama,
+                kelas,
+                kategori,
+                urgensi,
+                cerita
+            };
+
+            showToast('Mengirim data ke Google Sheets...', 'info');
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Gagal mengirim ke Google Apps Script:", err);
+            }
+
+            const newReq = {
+                id: konselingData.length + 1,
+                nama, kelas, kategori, urgensi, cerita, status: "Menunggu"
+            };
+
+            konselingData.unshift(newReq);
+            renderAdminKonseling();
+
+            document.getElementById('form-konseling-online').reset();
+            showToast('Permintaan konseling berhasil dikirim dan tersimpan! Guru BK akan segera menghubungi Anda secara rahasia.', 'success');
+            switchTab('beranda');
+        }
+
+        function renderAdminKonseling() {
+            const tbody = document.getElementById('admin-konseling-list');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            konselingData.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 font-semibold text-navy-900">${item.nama}</td>
+                        <td class="p-3">${item.kelas}</td>
+                        <td class="p-3"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">${item.kategori}</span></td>
+                        <td class="p-3"><span class="font-semibold ${item.urgensi === 'Darurat' ? 'text-red-600' : 'text-slate-600'}">${item.urgensi}</span></td>
+                        <td class="p-3"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">${item.status}</span></td>
+                        <td class="p-3">
+                            <button onclick="prosesKonseling(${item.id})" class="bg-navy-900 text-white px-3 py-1 rounded-lg text-[11px] font-semibold hover:bg-navy-800 transition">Proses</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function prosesKonseling(id) {
+            const item = konselingData.find(x => x.id === id);
+            if(item) {
+                item.status = "Diproses / Selesai";
+                renderAdminKonseling();
+                showToast(`Konseling ${item.nama} telah diperbarui statusnya.`, 'success');
+            }
+        }
+
+        // --- ROLE SWITCHER & PHOTO ---
+        function toggleRoleModal() {
+            const m = document.getElementById('role-modal');
+            m.classList.toggle('hidden');
+        }
+
+        function setRole(name, roleDesc, adminStatus) {
+            isAdmin = adminStatus;
+            document.getElementById('current-user-name').innerText = name;
+            document.getElementById('current-user-role').innerText = roleDesc;
+
+            document.querySelectorAll('.admin-only').forEach(el => {
+                if(isAdmin) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+
+            toggleRoleModal();
+            showToast(`Berhasil beralih peran sebagai ${name} (${roleDesc})`, 'success');
+            switchTab('beranda');
+        }
+
+        function updateProfilePhoto(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.querySelectorAll('img[alt="Ismail Utina, S.Psi"]').forEach(img => {
+                        img.src = e.target.result;
+                    });
+                    showToast('Foto profil guru BK berhasil diperbarui!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bg = 'bg-navy-900 text-white';
+            let icon = 'fa-circle-info text-blue-400';
+            if(type === 'success') {
+                bg = 'bg-emerald-900 text-white';
+                icon = 'fa-circle-check text-emerald-400';
+            } else if(type === 'info') {
+                bg = 'bg-navy-900 text-white';
+                icon = 'fa-circle-info text-gold-400';
+            }
+
+            toast.className = `${bg} px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-xs font-medium pointer-events-auto animate-fade-in border border-white/10`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-base"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function showNotificationDropdown() {
+            showToast('Ada 3 pengumuman dan jadwal konseling baru hari ini.', 'info');
+        }
+    </script>
+</body>
+</html>
